@@ -33,3 +33,15 @@ def create_flag():
 def get_flags():
     res = Implementation().get_flags()
     return jsonify({'Status': res[0], res[1]: res[2]}), res[0]
+
+
+@app.route('/api/v1/red_flags/<red_flag_id>', methods=[
+    'get', 'delete'])
+def single_flag(red_flag_id):
+    if Validation().validateId(red_flag_id):
+        res = [400, 'error', Validation().validateId(red_flag_id)]
+    elif request.method == 'get':
+        res = Implementation().get_flag(red_flag_id)
+    elif request.method == 'delete':
+        res = Implementation().delete(red_flag_id)
+    return jsonify({'Status': res[0], res[1]: res[2]}), res[0]

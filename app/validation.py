@@ -42,3 +42,9 @@ class Validation:
         else:
             result = Implementation().create(data)
         return result
+
+    def validateId(self, id):
+        try:
+            int(id)
+        except Exception:
+            return 'id must be a number'
