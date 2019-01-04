@@ -23,3 +23,10 @@ class Implementation:
         return [
             201, 'data', [{'id': red_flag.id, 'message': 'Created red flag'}]
             ]
+
+    def get_flags(self):
+        if not red_flags.keys():
+            res = [404, 'error', 'no red flags']
+        else:
+            res = [200, 'data', [red_flags[key] for key in red_flags.keys()]]
+        return res
