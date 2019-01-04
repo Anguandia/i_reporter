@@ -3,6 +3,7 @@ from flask import request, jsonify
 from app import create_app
 from .validation import Validation
 from .implementation import Implementation
+from app.wrappers import json_required
 
 
 config_name = os.getenv('FLASK_ENV')
@@ -23,6 +24,7 @@ def home():
 
 
 @app.route('/api/v1/red_flags', methods=['POST'])
+@json_required
 def create_flag():
     data = request.json
     res = Validation().validateNew(data)
