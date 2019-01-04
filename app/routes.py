@@ -56,3 +56,20 @@ def edit(red_flag_id, key):
     data = request.json
     res = Validation().validateEdit(data, red_flag_id, key)
     return jsonify({'Status': res[0], res[1]: res[2]}), res[0]
+
+
+@app.route('/api/v1/<resource>', methods=['GET', 'POST', 'PATCH', 'DELETE'])
+@app.route(
+  '/api/v1/<resource>/<id>', methods=['GET', 'POST', 'PATCH', 'DELETE']
+  )
+@app.route(
+  '/api/v1/<resource>/<id>/<action>',
+  methods=['GET', 'POST', 'PATCH', 'DELETE']
+  )
+def wrongURL(resource, methods=['get'], id=None, action=None):
+    if resource != 'red_flags':
+        return jsonify(
+            {'Status': 400, 'error': f'wrong url, check \'{resource}\''}
+            ), 400
+    elif request.method not in methods:
+        return jsonify({'Status': 405, 'error': 'wrong method'}), 405
