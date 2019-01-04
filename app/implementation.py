@@ -48,3 +48,46 @@ class Implementation:
         except Exception:
             res = [404, 'error', 'red flag not found']
         return res
+
+    def edit(self, red_flag_id, data, field):
+        try:
+            red_flag = red_flags[str(red_flag_id)]
+            if red_flag['status'] in ['rejected', 'resolved']:
+                return [
+                    403, 'error', f'red flag already {red_flag["status"]}'
+                    ]
+            elif field == 'location' and ' ' in data['location']:
+                d = data['location'].split(' ')
+                # case first case geolocation being added, tag record as
+                # 'location added' with geolocation prepend and append geoloc
+                # to descriptive loc already in
+                if 'geolocation' not in red_flag['location']:
+                    red_flag['location'] += ' ' + 'geolocation ' +\
+                     f'N: {d[0]}, E: {d[1]}'
+                    res = 'added'
+                # case already taged, replace existing geolocation with new
+                else:
+                    red_flag['location'] =\
+                        red_flag['location'][:red_flag['location'].index(
+                            'geolocation')] +\
+                        'geolocation ' + f'N: {d[0]}, E: {d[1]}'
+                    res = 'updated'
+            # make a general provision for future editable fields
+            elif field == 'location' and ' ' not in data['location']:
+
+                res = [
+                    400, 'error',
+                    "location must be of format'latitude <space> longitude'"
+                    ]
+            else:
+                red_flag[field] = data[field]
+                res = 'updated'
+            if isinstance(res, str):
+                result = [200, 'data', [{
+                    'id': int(red_flag_id), 'message':
+                    f'{res} red-flag record\'s {field}'}]]
+            else:
+                result = res
+        except Exception:
+            result = self.get_flag(red_flag_id)
+        return result

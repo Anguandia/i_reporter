@@ -48,3 +48,19 @@ class Validation:
             int(id)
         except Exception:
             return 'id must be a number'
+
+    def validateEdit(self, data, red_flag_id, field):
+        if field not in ['location', 'comment', 'status']:
+            result = [400, 'error', f'wrong endpoint \'{field}\'']
+        # check error in data key vs endpoint specification
+        elif field not in data:
+            result = [
+              400, 'error',
+              f'{field} key missing, check your input or url'
+              ]
+        # safeguard against accidental deleting of field data
+        elif not data[field]:
+            result = [400, 'error', f'submit new {field}']
+        else:
+            result = Implementation().edit(red_flag_id, data, field)
+        return result
